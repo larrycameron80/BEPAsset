@@ -192,7 +192,7 @@ class Store {
       return assetBalances
     } catch (e) {
       console.log(e)
-      return { message: `Does not exist your address ${address} in the chain` }
+      return []
     }
   }
 

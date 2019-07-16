@@ -8,7 +8,8 @@ import {
 import { colors } from '../../theme'
 
 import {
-  FEES_UPDATED
+  FEES_UPDATED,
+  WALLET_UPDATED
 } from '../../constants'
 
 import Store from "../../stores";
@@ -63,16 +64,36 @@ const styles = theme => ({
 
 class Instructions extends Component {
   state = {
-    fees: []
+    fees: [],
+    address: '',
+    balance: 0
   };
 
   componentWillMount() {
+    this.updateAddressAndBalance();
     emitter.on(FEES_UPDATED, this.feesUpdated);
+    emitter.on(WALLET_UPDATED, this.walletUpdated);
   };
 
   componentWillUnmount() {
     emitter.removeListener(FEES_UPDATED, this.feesUpdated);
+    emitter.removeListener(WALLET_UPDATED, this.walletUpdated);
   };
+
+  updateAddressAndBalance = () => {
+    const wallet = store.getStore('wallet');
+    store.getAddressBalances(wallet.address)
+      .then((balances) => {
+        const bnbBalance = balances.find((assetBalance) => {
+          return 'BNB' === assetBalance.symbol ? true : false
+        })
+
+        this.setState({
+          address: wallet.address,
+          balance: bnbBalance ? bnbBalance.free : 0
+        })
+      })
+  }
 
   feesUpdated = () => {
     const fees = store.getStore('fees')
@@ -112,10 +133,19 @@ class Instructions extends Component {
     })
   };
 
+  walletUpdated = (content) => {
+    this.updateAddressAndBalance()
+  };
+
   render() {
     const {
       classes
     } = this.props;
+
+    const {
+      address,
+      balance
+    } = this.state;
 
     return (
       <Grid
@@ -128,11 +158,27 @@ class Instructions extends Component {
             <Typography className={ classes.header }>With bnbridge you can:</Typography>
             <div style={{marginBottom: 15}}><Typography className={ classes.action }>Launch BEP2 assets</Typography></div>
             <div style={{marginBottom: 15}}><Typography className={ classes.action }>List tokens on Binance DEX</Typography></div>
-            <div style={{marginBottom: 15}}><Typography className={ classes.action }>Swap ERC20 to BEP2 compatible tokens</Typography></div>
           </div>
           <div className={ classes.itemWrapper } >
             <Typography className={ classes.header }>Bnbridge fees:</Typography>
               <Grid
+                container
+                justify="flex-start"
+                alignItems="flex-end">
+                <Grid item xs={2} sm={2} align='left' className={ classes.action }>
+                  Address
+                </Grid>
+                <Grid item xs={12} sm={10} align='right' className={ classes.price }>
+                  { address }
+                </Grid>
+                <Grid item xs={6} align='left' className={ classes.action }>
+                  Balance
+                </Grid>
+                <Grid item xs={6} align='right' className={ classes.price }>
+                  { balance } BNB
+                </Grid>
+            </Grid>
+            <Grid
                 container
                 justify="flex-start"
                 alignItems="flex-end">
