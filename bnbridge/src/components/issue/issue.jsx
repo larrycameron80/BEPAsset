@@ -106,7 +106,6 @@ class Issue extends Component {
   };
 
   componentWillMount() {
-    console.log(store.getStore('wallet'))
     this.setState({
       wallet: store.getStore('wallet')
     })
@@ -171,9 +170,6 @@ class Issue extends Component {
 
       await store.setPrivateKey(privateKey)
       const newToken = await store.bncClient.tokens.issue(wallet.address, tokenName, symbol, totalSupply, mintable)
-      console.log('newToken: ', newToken.result)
-      console.log('newToken: ', newToken.result[0])
-      console.log('newToken: ', newToken.result[0].hash)
 
       if (newToken.status === 200) {
         this.setState({
