@@ -5,6 +5,9 @@ const config = {
   explorerURL: "https://explorer.binance.org/tx/",
   bnbAddressLength: 42,
   erc20addressLength: 42,
+  binanceRpcUrl: "wss://data-seed-pre-2-s1.binance.org",
+  initialDepositAmount: 1000,
+  binanceUrl: "dex.binance.org",
 };
 
 export default config;
