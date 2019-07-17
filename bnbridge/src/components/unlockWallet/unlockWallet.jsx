@@ -16,6 +16,7 @@ import SvgIcon from '@material-ui/core/SvgIcon';
 import { colors } from '../../theme'
 
 import Header from '../header';
+import WalletConnect from '../walletConnect';
 import Keystore from '../keystore';
 import Mnemonic from '../mnemonic';
 import ComingSoon from '../common/comingSoon';
@@ -99,7 +100,7 @@ const styles = theme => ({
 
 class UnlockWallet extends Component {
   state = {
-    walletType: 2,
+    walletType: 0,
     walletTypeLabels: ['WalletConnect', 'Ledger Device', 'KeyStore File', 'Mnemonic Phrase']
   };
 
@@ -189,7 +190,7 @@ class UnlockWallet extends Component {
 
     return (
       <Grid item className={classes.mainPanel} align="left">
-        <ComingSoon />
+        <WalletConnect />
       </Grid>
     )
   };
