@@ -36,7 +36,6 @@ import AlertDialog from "../common/alertDialog";
 import ConfirmDialog from "../common/confirmDialog";
 import PageLoader from "../common/pageLoader";
 
-import config from "../../config";
 import Store from "../../stores";
 const dispatcher = Store.dispatcher;
 const store = Store.store
