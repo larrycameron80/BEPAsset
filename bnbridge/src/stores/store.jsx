@@ -1,4 +1,5 @@
 import bnbClient from '@binance-chain/javascript-sdk';
+import WalletConnect from "@walletconnect/browser";
 import fetch from 'node-fetch';
 import config from "../config";
 import FileSaver from 'file-saver';
@@ -35,7 +36,10 @@ import {
   DOWNLOAD_BNB_KEYSTORE,
   BNB_KEYSTORE_DOWNLOADED,
   SET_WALLET,
-  WALLET_UPDATED
+  WALLET_UPDATED,
+  REQUST_WALLET_CONNECT,
+  RETURN_WALLET_URI,
+  CLOSE_WALLET_CONNECT_MODAL,
 } from '../constants'
 const crypto = require('crypto');
 const bip39 = require('bip39');
@@ -142,6 +146,8 @@ class Store {
           case SET_WALLET:
             this.setWallet(payload);
             break;
+          case REQUST_WALLET_CONNECT:
+            this.connectWallet(payload);
           default: {
           }
         }
@@ -150,6 +156,20 @@ class Store {
 
     this.bncClient = new bnbClient(config.binanceUrl)
     this.rpcClient = new bnbClient.rpc(config.binanceRpcUrl, config.network)
+    this.walletConnector = new WalletConnect({
+      bridge: config.wcBridgeUrl
+    })
+    this.walletConnector.on('connect', (err, payload) => {
+      console.log('connected')
+      if (err) {
+        console.log(err)
+        emitter.emit(ERROR, err);
+        return
+      }
+
+      console.log(payload)
+      emitter.emit(CLOSE_WALLET_CONNECT_MODAL, {})
+    })
   }
 
   async setPrivateKey(privateKey) {
@@ -160,7 +180,7 @@ class Store {
   };
 
   getStore(index) {
-    return this.store[index];
+    return this.store[index]
   };
 
   setStore(obj) {
@@ -171,7 +191,20 @@ class Store {
 
   setWallet(payload) {
     this.setStore({ wallet: payload.wallet })
-    emitter.emit(WALLET_UPDATED, payload.wallet);
+    emitter.emit(WALLET_UPDATED, payload.wallet)
+  };
+
+  connectWallet(payload) {
+    this.walletConnector.createSession()
+      .then(() => {
+        const uri = store.walletConnector.uri
+
+        emitter.emit(RETURN_WALLET_URI, uri)
+      })
+      .catch(err => {
+        console.log('wallet connect error : ', err)
+        emitter.emit(ERROR, err)
+      })
   };
 
   async getTokenInfo(symbol) {
