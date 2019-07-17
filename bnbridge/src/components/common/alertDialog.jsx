@@ -2,17 +2,14 @@ import React from 'react'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Link,
   Grid,
   Typography
 } from '@material-ui/core';
-import Input from '../common/input';
 import StyledButton from '../common/button';
 
 const styles = theme => ({

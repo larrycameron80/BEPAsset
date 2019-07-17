@@ -24,7 +24,6 @@ const styles = theme => ({
 
 function StyledDialog(props) {
   const {
-    classes,
     onClick,
     open,
     fullScreen,

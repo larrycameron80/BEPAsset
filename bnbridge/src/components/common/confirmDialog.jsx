@@ -2,12 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle
 } from '@material-ui/core';
 import pencil from '../../static/pencil.svg';
 import StyledButton from '../common/button';
@@ -24,7 +22,6 @@ const styles = theme => ({
 
 function ConfirmDialog(props) {
   const {
-    classes,
     onClick,
     open,
     fullScreen,

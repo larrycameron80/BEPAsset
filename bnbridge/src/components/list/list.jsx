@@ -174,7 +174,6 @@ class List extends Component {
       votingPeriod,
       initialPrice,
       wallet,
-      listError
     } = this.state
 
     const date = new Date()
@@ -226,10 +225,7 @@ class List extends Component {
     this.setState({ loading: true })
     const {
       symbol,
-      expiryTime,
-      votingPeriod,
       wallet,
-      listError
     } = this.state
 
     try {
@@ -380,14 +376,12 @@ class List extends Component {
     this.setState({ loading: true })
     const {
       wallet,
-      symbol,
       proposalId,
       proposalStatus
     } = this.state
 
     try {
-      const proposalDescription = JSON.parse(proposalStatus.description)
-      const res = await store.bncClient.list(wallet.address, proposalId, proposalStatus.base_asset_symbol, proposalStatus.quote_asset_symbol, proposalStatus.description.initPrice / 1e8)
+      await store.bncClient.list(wallet.address, proposalId, proposalStatus.base_asset_symbol, proposalStatus.quote_asset_symbol, proposalStatus.description.initPrice / 1e8)
 
       this.setState({
         page: 'Listed'
