@@ -8,7 +8,7 @@ const config = {
   binanceRpcUrl: "wss://data-seed-pre-2-s1.binance.org",
   initialDepositAmount: 1000,
   binanceUrl: "https://dex.binance.org",
-  wcBridgeUrl: "https://bridge.walletconnect.org"
+  wcBridgeUrl: "https://wallet-bridge.binance.org"
 };
 
 export default config;

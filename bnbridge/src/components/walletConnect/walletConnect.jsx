@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import WalletConnectQRCodeModal from "@walletconnect/qrcode-modal";
 import PropTypes from 'prop-types';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, withRouter } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 
 import {
@@ -15,10 +15,11 @@ import {
   ERROR,
   REQUST_WALLET_CONNECT,
   RETURN_WALLET_URI,
-  CLOSE_WALLET_CONNECT_MODAL
+  WALLET_CONNECT_CONNECTED
 } from '../../constants';
 
 import { colors } from '../../theme'
+import PageLoader from "../common/pageLoader";
 
 import scanIcon from '../../static/scan-qrcode.png';
 import scanHoverIcon from '../../static/qrcode_hover.svg';
@@ -81,29 +82,24 @@ const styles = theme => ({
 
 class WalletConnect extends Component {
   state = {
-    loading: false,
-    hover: false
+    loading: false
   };
 
   componentWillMount() {
     emitter.on(ERROR, this.error);
     emitter.on(RETURN_WALLET_URI, this.showQRcode)
-    emitter.on(CLOSE_WALLET_CONNECT_MODAL, this.closeQRcode)
+    emitter.on(WALLET_CONNECT_CONNECTED, this.closeQRcode)
   };
 
   componentWillUnmount() {
     emitter.removeListener(ERROR, this.error);
     emitter.removeListener(RETURN_WALLET_URI, this.showQRcode)
-    emitter.removeListener(CLOSE_WALLET_CONNECT_MODAL, this.closeQRcode)
+    emitter.removeListener(WALLET_CONNECT_CONNECTED, this.closeQRcode)
   };
 
   error = (err) => {
     // this.props.showError(err)
     this.setState({ loading: false })
-  };
-
-  toggleHover =() => {
-    this.setState({hover: !this.state.hover})
   };
 
   showQRcode = (uri) => {
@@ -116,7 +112,11 @@ class WalletConnect extends Component {
 
   closeQRcode = () => {
     WalletConnectQRCodeModal.close()
-  }
+    this.setState({
+      loading: false
+    })
+    this.props.history.push('/token')
+  };
 
   walletConnect = () => {
     console.log('connectWallet')
@@ -129,10 +129,11 @@ class WalletConnect extends Component {
 
   render() {
     const { classes } = this.props;
-    const { hover } = this.state;
+    const { loading } = this.state;
 
     return (
       <React.Fragment>
+        { loading && <PageLoader/> }
         <Grid item xs={ 12 }>
           <Typography className={ classes.root }>
             WalletConnect(Recommended)
@@ -145,8 +146,6 @@ class WalletConnect extends Component {
           <Button 
             className={ classes.instruction }
             onClick={ this.walletConnect }
-            onMouseEnter={ this.toggleHover }
-            onMouseOut={ this.toggleHover }
           >
             <span className={ classes.instructionContent }>Get WalletConnect QR Code</span>
             { <img src={ scanIcon } style={{ width: '50px' }} alt="Scan Icon" /> }
@@ -176,4 +175,4 @@ WalletConnect.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(WalletConnect);
+export default withRouter(withStyles(styles)(WalletConnect));

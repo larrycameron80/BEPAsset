@@ -39,7 +39,8 @@ import {
   WALLET_UPDATED,
   REQUST_WALLET_CONNECT,
   RETURN_WALLET_URI,
-  CLOSE_WALLET_CONNECT_MODAL,
+  WALLET_CONNECT_CONNECTED,
+  WALLET_CONNECT_DISCONNECTED,
 } from '../constants'
 const crypto = require('crypto');
 const bip39 = require('bip39');
@@ -92,6 +93,7 @@ class Store {
       tokens: [],
       fees: [],
       wallet: {},
+      walletConnected: false,
       ...storage,
     }
 
@@ -160,15 +162,53 @@ class Store {
       bridge: config.wcBridgeUrl
     })
     this.walletConnector.on('connect', (err, payload) => {
-      console.log('connected')
       if (err) {
-        console.log(err)
         emitter.emit(ERROR, err);
         return
       }
 
-      console.log(payload)
-      emitter.emit(CLOSE_WALLET_CONNECT_MODAL, {})
+      const content = payload.params[0]
+      this.setStore({
+        wallet: {
+          address: content.accounts[0],
+          keystore: null
+        },
+        walletConnected: true
+      })
+      emitter.emit(WALLET_CONNECT_CONNECTED, content)
+    })
+
+    this.walletConnector.on('session_update', (err, payload) => {
+      if (err) {
+        emitter.emit(ERROR, err);
+        return
+      }
+
+      const content = payload.params[0]
+      this.setStore({
+        wallet: {
+          address: content.accounts[0],
+          keystore: null
+        },
+        walletConnected: true
+      })
+      emitter.emit(WALLET_CONNECT_CONNECTED, content)
+    })
+
+    this.walletConnector.on('disconnect', (err, payload) => {
+      if (err) {
+        emitter.emit(ERROR, err);
+        return
+      }
+
+      this.setStore({
+        wallet: {
+          address: '',
+          keystore: null
+        },
+        walletConnected: false
+      })
+      emitter.emit(WALLET_CONNECT_DISCONNECTED)
     })
   }
 

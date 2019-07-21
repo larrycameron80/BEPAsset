@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Redirect, withRouter } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {
@@ -8,8 +9,11 @@ import {
 import { colors } from '../../theme'
 
 import {
+  ERROR,
   FEES_UPDATED,
-  WALLET_UPDATED
+  WALLET_UPDATED,
+  WALLET_CONNECT_CONNECTED,
+  WALLET_CONNECT_DISCONNECTED
 } from '../../constants'
 
 import Store from "../../stores";
@@ -71,29 +75,56 @@ class Instructions extends Component {
 
   componentWillMount() {
     this.updateAddressAndBalance();
+    emitter.on(ERROR, this.error);
     emitter.on(FEES_UPDATED, this.feesUpdated);
     emitter.on(WALLET_UPDATED, this.walletUpdated);
+    emitter.on(WALLET_CONNECT_CONNECTED, this.walletConnected);
+    emitter.on(WALLET_CONNECT_DISCONNECTED, this.walletDisconnected);
   };
 
   componentWillUnmount() {
+    emitter.removeListener(ERROR, this.error);
     emitter.removeListener(FEES_UPDATED, this.feesUpdated);
     emitter.removeListener(WALLET_UPDATED, this.walletUpdated);
+    emitter.removeListener(WALLET_CONNECT_CONNECTED, this.walletConnected);
+    emitter.removeListener(WALLET_CONNECT_DISCONNECTED, this.walletDisconnected);
+  };
+
+  error = (err) => {
+    // this.props.showError(err)
+    this.setState({ loading: false })
   };
 
   updateAddressAndBalance = () => {
     const wallet = store.getStore('wallet');
-    store.getAddressBalances(wallet.address)
-      .then((balances) => {
-        const bnbBalance = balances.find((assetBalance) => {
-          return 'BNB' === assetBalance.symbol ? true : false
-        })
+    console.log(wallet)
+    if (wallet && wallet.address) {
+      store.getAddressBalances(wallet.address)
+        .then((balances) => {
+          const bnbBalance = balances.find((assetBalance) => {
+            return 'BNB' === assetBalance.symbol ? true : false
+          })
 
-        this.setState({
-          address: wallet.address,
-          balance: bnbBalance ? bnbBalance.free : 0
+          this.setState({
+            address: wallet.address,
+            balance: bnbBalance ? bnbBalance.free : 0
+          })
         })
-      })
-  }
+    } else {
+      this.props.history.push('/')
+    }
+  };
+
+  walletConnected = (content) => {
+    this.setState({
+      address: content.account[0]
+    })
+    this.updateAddressAndBalance()
+  };
+
+  walletDisconnected = () => {
+    this.props.history.push('/')
+  };
 
   feesUpdated = () => {
     const fees = store.getStore('fees')
@@ -218,4 +249,4 @@ Instructions.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Instructions);
+export default withRouter(withStyles(styles)(Instructions));
