@@ -20,7 +20,7 @@
     "express": "^4.16.4",
     "generate-password": "^1.4.1",
     "helmet": "^3.16.0",
-    "http-auth": "^3.2.3",
+    "http-auth": "^3.2.4",
     "https": "^1.0.0",
     "morgan": "^1.9.1",
     "node-pty": "^0.8.1",
