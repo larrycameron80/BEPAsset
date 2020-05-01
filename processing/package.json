@@ -4,7 +4,9 @@
   "description": "Token swap utility for Fantom to Binance Chain",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "antonnell.crypto@gmail.com",
   "license": "MIT",
@@ -15,6 +17,8 @@
     "ethereumjs-tx": "^2.0.0",
     "node-pty": "^0.8.1",
     "pg-promise": "^8.6.5",
-    "web3": "1.0.0-beta.53"
-  }
+    "web3": "1.0.0-beta.53",
+    "snyk": "^1.316.1"
+  },
+  "snyk": true
 }
