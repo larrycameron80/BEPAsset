@@ -20,13 +20,16 @@
     "react-router-dom": "^5.0.1",
     "react-scripts": "^3.0.1",
     "sha256": "^0.2.0",
-    "typeface-roboto": "0.0.54"
+    "typeface-roboto": "0.0.54",
+    "@snyk/protect": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prepare": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -46,5 +49,6 @@
   "devDependencies": {
     "@walletconnect/browser": "^1.0.0-beta.29",
     "@walletconnect/qrcode-modal": "^1.0.0-beta.29"
-  }
+  },
+  "snyk": true
 }
