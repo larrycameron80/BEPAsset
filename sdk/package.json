@@ -9,7 +9,7 @@
   "author": "antonnell.crypto@gmail.com",
   "license": "MIT",
   "dependencies": {
-    "@binance-chain/javascript-sdk": "^2.10.0",
+    "@binance-chain/javascript-sdk": "^4.2.1",
     "async": "^2.6.2",
     "axios": "^0.18.1",
     "bip39": "^3.0.2",
